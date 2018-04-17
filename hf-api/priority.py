@@ -54,7 +54,6 @@ def runwithit(newdata):
     for i in range(len(priority_list)):
         pdata =  priority_list[i]
         if pdata in newdata:
-            print 'good'
             newdata = json.loads(newdata)
             count_num = newdata[pdata]
             redis_stats = get_stats_redis(pdata)
