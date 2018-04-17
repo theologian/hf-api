@@ -1,8 +1,9 @@
-from flask import Flask, abort, request 
+#from flask import Flask, abort, request 
+from flask import Flask, request, jsonify
+#from flask_restful import Resource, Api, reqparse
+from flask_restful import Api
 import logging
-
-from flask import Flask
-from flask_restful import Resource, Api, reqparse
+import priority as p
 
 log = logging.getLogger('werkzeug')
 # disables verbose logging
@@ -15,13 +16,14 @@ api = Api(app)
 def get_data():
     if request.method == 'POST':
         args = request.args
-        print (args)
+        newdata = (args)
         p1count = args['p1']
         p2count = args['p2']
         p1 = request.args.get('p1')
         p2 = request.args.get('p2')
-        return jsonify(dict(data=[p1, p2]))
-        #return '''<h1>The value is p1: {}</h1>'''.format(p1)
+        update_data = p.runwithit(newdata)
+        #return jsonify(dict(data=[p1, p2]))
+        return update_data
 
 @app.route('/test/', methods = ['POST'])
 def get_priority():
@@ -29,3 +31,4 @@ def get_priority():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000, debug=True)
+    p.run_once()
