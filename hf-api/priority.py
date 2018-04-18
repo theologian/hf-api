@@ -1,6 +1,6 @@
 from math import floor
 from werkzeug.datastructures import ImmutableMultiDict
-import pickle, redis, logging, pdb
+import pickle, redis, logging, pdb, ast
 
 conn = redis.StrictRedis(host='localhost', port=6379, db=0)
 priority_log = "/var/log/priority.log"
@@ -11,21 +11,26 @@ logging.basicConfig(level=logging.INFO,
                     filemode = 'w')
 
 def run_once():
-    p1 = { "p1": {"count": 0, "avg": 0, "max": 0, "min": 99999999999}}
-    p2 = { "p2": {"count": 0, "avg": 0, "max": 0, "min": 99999999999}}
-    set_stats_redis(p1, 'p1')
-    set_stats_redis(p2, 'p2')
-    delete_stats_redis('p1_average')
-    delete_stats_redis('p2_average')
     average = []
-    set_stats_redis(average, 'p1_average')
-    set_stats_redis(average, 'p2_average')
+    pkey_temp = '{ "pkey": {"count": 0, "avg": 0, "max": 0, "min": 99999999999}}'
+    for i in range(9999):
+        pkey_temp = '{ "pkey": {"count": 0, "avg": 0, "max": 0, "min": 99999999999}}'
+        pkey = 'p' + str(i)
+        pkey_temp = pkey_temp.replace('pkey', pkey)
+        pkey_temp = ast.literal_eval(pkey_temp)
+        pke_average = 'p' + str(i) + '_average'
+        set_stats_redis(p1, pkey)
+        set_stats_redis(p2, pkey)
+        delete_stats_redis('p1_average')
+        delete_stats_redis(pke_average)
+        set_stats_redis(average, pke_average)
+        logging.info("created %s" % (pkey))
     logging.info("run_once ran")
 
 def set_stats_redis(redis_data, redis_key):
     p_redis_data = pickle.dumps(redis_data)
     conn.set(redis_key, p_redis_data)
-    logging.info("set_stats_redis ran")
+    logging.info("set_stats_redis ran : redis_data = %s, redis_key =  %s" % (redis_data, redis_key))
 
 def get_stats_redis(redis_key):
     read_redis_key = conn.get(redis_key)
@@ -76,5 +81,5 @@ def run_priority(newdata):
         pdata + 'updated_redis'
         updated_redis = get_priority(newdata, pdata)
         updated_redis_full.update(updated_redis)
-        logging.info("run_priority ran : run_priority =  %s" % (run_priority))
+        logging.info("run_priority ran : run_priority =  %s" % (updated_redis_full))
     return updated_redis_full
