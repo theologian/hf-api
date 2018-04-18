@@ -45,7 +45,7 @@ def response(pdata, count_num):
     average.append(count_num)
     fullcount = len(average)
     averagesum = 0 
-    if fullcount > 1:
+    if fullcount >= 1:
         for num in average:
             averagesum += int(num)
         new_avg = int(floor(averagesum / fullcount))
