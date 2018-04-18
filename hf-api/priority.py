@@ -13,13 +13,14 @@ logging.basicConfig(level=logging.INFO,
 def run_once():
     p1 = { "p1": {"count": 0, "avg": 0, "max": 0, "min": 99999999999}}
     p2 = { "p2": {"count": 0, "avg": 0, "max": 0, "min": 99999999999}}
-#    average = [] 
     set_stats_redis(p1, 'p1')
     set_stats_redis(p2, 'p2')
-    set_stats_redis(average, 'p2_average')
+    delete_stats_redis('p1_average')
+    delete_stats_redis('p2_average')
+    average = []
     set_stats_redis(average, 'p1_average')
+    set_stats_redis(average, 'p2_average')
     logging.info("run_once ran")
-    print "run_once ran"
 
 def set_stats_redis(redis_data, redis_key):
     p_redis_data = pickle.dumps(redis_data)
@@ -31,6 +32,11 @@ def get_stats_redis(redis_key):
     new_redis_data = pickle.loads(read_redis_key)
     logging.info("get_stats_redis ran : redis_key =  %s" % (redis_key))
     return new_redis_data
+
+def delete_stats_redis(redis_key):
+    delete_redis_key = conn.delete(redis_key)
+    logging.info("delete_stats_redis ran : redis_key =  %s" % (redis_key))
+    return delete_redis_key
 
 def response(pdata, count_num):
     redis_stats = get_stats_redis(pdata)
