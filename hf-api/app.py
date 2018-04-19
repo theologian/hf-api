@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify, make_response
-from flask_restful import Api
 import logging, json
 import priority as p
 
@@ -8,7 +7,6 @@ log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
 app = Flask(__name__)
-api = Api(app)
 
 @app.route('/', methods = ['POST'])
 def post_data():
